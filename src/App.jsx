@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import './app.css';
 
 function App() {
   const [password, setPassword] = useState('');
+  const [strength, setStrength] = useState(0);
 
   const handleChange = (e) => {
-    const newPassword = e.target.value;
+    const newPassword = e.target.value.trim();
     setPassword(newPassword);
     handleCheckStrength(newPassword);
   };
@@ -13,24 +15,22 @@ function App() {
     e.preventDefault();
     console.log(password);
     setPassword('');
+    setStrength(0);
   };
 
   const handleCheckStrength = (password) => {
     let hasLetters = /\p{Letter}/u.test(password);
     let hasNumbers = /\d/.test(password);
     let hasSymbols = /[^\p{L}\p{N}]/gu.test(password);
+
     let componentsCount = [hasLetters, hasNumbers, hasSymbols].filter(
       (symbol) => symbol
     ).length;
 
-    if (password.length < 8) {
-      console.log('weak');
-    } else if (componentsCount === 1) {
-      console.log('easy');
-    } else if (componentsCount === 2) {
-      console.log('medium');
-    } else if (componentsCount === 3) {
-      console.log('hard');
+    if (!password || password.length < 8) {
+      setStrength(0);
+    } else {
+      setStrength(componentsCount);
     }
   };
 
@@ -42,6 +42,45 @@ function App() {
         placeholder="enter your password"
         onChange={handleChange}
         value={password}></input>
+      <div className="strength-indicator">
+        <div
+          className={
+            !password.length && !strength
+              ? 'strength-bar'
+              : password.length > 0 && !strength
+              ? 'strength-bar red'
+              : strength === 1 && password.length > 0
+              ? 'strength-bar red'
+              : strength === 2
+              ? 'strength-bar yellow'
+              : 'strength-bar green'
+          }></div>
+
+        <div
+          className={
+            !password.length && !strength
+              ? 'strength-bar'
+              : strength === 0 && password.length > 0
+              ? 'strength-bar red'
+              : strength === 1
+              ? 'strength-bar '
+              : strength === 2
+              ? 'strength-bar yellow'
+              : 'strength-bar green'
+          }></div>
+        <div
+          className={
+            !password.length && !strength
+              ? 'strength-bar'
+              : strength === 0 && password.length > 0
+              ? 'strength-bar red'
+              : strength === 2
+              ? 'strength-bar '
+              : strength === 3
+              ? 'strength-bar green'
+              : 'strength-bar'
+          }></div>
+      </div>
       <button type="submit">Submit</button>
     </form>
   );
