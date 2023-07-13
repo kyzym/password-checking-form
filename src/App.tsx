@@ -1,6 +1,20 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import './app.css';
-import { CellNumber, PasswordStrengthStatus } from './types/types';
+import {
+  CellNumber,
+  PasswordStrengthStatus,
+  StrengthStatus,
+} from './types/types';
+import {
+  LETTERS_REGEXP,
+  NUMBERS_REGEXP,
+  STRENGTH_BAR,
+  STRENGTH_BAR_GREEN,
+  STRENGTH_BAR_RED,
+  STRENGTH_BAR_YELLOW,
+  SYMBOLS_REGEXP,
+  minSecureNumber,
+} from './utils/constants';
 
 function App() {
   const [password, setPassword] = useState<string>('');
@@ -18,7 +32,7 @@ function App() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    console.log(password);
+    console.log(`${password}\nThanks 😎`);
 
     setPassword('');
 
@@ -26,17 +40,17 @@ function App() {
   };
 
   const handleCheckStrength = (password: string) => {
-    const hasLetters = /\p{L}/u.test(password);
+    const hasLetters = LETTERS_REGEXP.test(password);
 
-    const hasNumbers = /\d/.test(password);
+    const hasNumbers = NUMBERS_REGEXP.test(password);
 
-    const hasSymbols = /[^\p{L}\p{N}]/gu.test(password);
+    const hasSymbols = SYMBOLS_REGEXP.test(password);
 
     const componentsCount = [hasLetters, hasNumbers, hasSymbols].filter(
       (symbol) => symbol
     ).length;
 
-    if (!password || password.length < 8) {
+    if (!password || password.length < minSecureNumber) {
       setStrength(0);
     } else {
       setStrength(componentsCount);
@@ -47,16 +61,16 @@ function App() {
     if (!password.length && !strength) {
       return PasswordStrengthStatus.EMPTY;
     }
-    if (strength === 0 && password.length > 0) {
+    if (strength === StrengthStatus.UNSAFELY && password.length > 0) {
       return PasswordStrengthStatus.UNSAFELY;
     }
-    if (strength === 1) {
+    if (strength === StrengthStatus.EASY) {
       return PasswordStrengthStatus.EASY;
     }
-    if (strength === 2) {
+    if (strength === StrengthStatus.MEDIUM) {
       return PasswordStrengthStatus.MEDIUM;
     }
-    if (strength === 3) {
+    if (strength === StrengthStatus.STRONG) {
       return PasswordStrengthStatus.STRONG;
     }
     return PasswordStrengthStatus.EMPTY;
@@ -65,25 +79,25 @@ function App() {
   const prepareClassByStatus = (numberOfCell: number): string => {
     const status = getStatus();
 
-    if (status === PasswordStrengthStatus.EMPTY) return `strength-bar`;
+    if (status === PasswordStrengthStatus.EMPTY) return STRENGTH_BAR;
 
     if (
       status === PasswordStrengthStatus.EASY &&
       numberOfCell === CellNumber.SECOND
     )
-      return `strength-bar`;
+      return STRENGTH_BAR;
 
     if (
       status === PasswordStrengthStatus.UNSAFELY &&
       numberOfCell === CellNumber.THIRD
     )
-      return `strength-bar red`;
+      return STRENGTH_BAR_RED;
 
     if (
       status !== PasswordStrengthStatus.STRONG &&
       numberOfCell === CellNumber.THIRD
     )
-      return 'strength-bar';
+      return STRENGTH_BAR;
 
     if (
       status === PasswordStrengthStatus.STRONG &&
@@ -95,11 +109,11 @@ function App() {
       status === PasswordStrengthStatus.UNSAFELY ||
       status === PasswordStrengthStatus.EASY
     )
-      return `strength-bar red`;
+      return STRENGTH_BAR_RED;
 
-    if (status === PasswordStrengthStatus.MEDIUM) return `strength-bar yellow`;
+    if (status === PasswordStrengthStatus.MEDIUM) return STRENGTH_BAR_YELLOW;
 
-    if (status === PasswordStrengthStatus.STRONG) return `strength-bar green`;
+    if (status === PasswordStrengthStatus.STRONG) return STRENGTH_BAR_GREEN;
 
     return '';
   };
@@ -111,16 +125,17 @@ function App() {
         name="password"
         placeholder="Enter your strongest password"
         onChange={handleChange}
-        value={password}></input>
+        value={password}
+      />
 
       <button type="submit">Reset</button>
 
       <div className="strength-indicator">
-        <div className={prepareClassByStatus(0)}></div>
+        <div className={prepareClassByStatus(CellNumber.FIRST)}></div>
 
-        <div className={prepareClassByStatus(1)}></div>
+        <div className={prepareClassByStatus(CellNumber.SECOND)}></div>
 
-        <div className={prepareClassByStatus(2)}></div>
+        <div className={prepareClassByStatus(CellNumber.THIRD)}></div>
       </div>
     </form>
   );
