@@ -1,6 +1,6 @@
 export const LETTERS_REGEXP = /\p{L}/u;
 export const NUMBERS_REGEXP = /\d/;
-export const SYMBOLS_REGEXP = /[!@#$%^&*()_+\-={};"\\|,.<>?]/;
+export const SYMBOLS_REGEXP = /[!@#$%~&><^&*()_+\-={};"\\|,.<>?]/;
 
 export const minSecureNumber = 8;
 export const STRENGTH_BAR = `strength-bar`;
