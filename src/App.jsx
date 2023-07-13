@@ -3,24 +3,32 @@ import './app.css';
 
 function App() {
   const [password, setPassword] = useState('');
+
   const [strength, setStrength] = useState(0);
 
   const handleChange = (e) => {
     const newPassword = e.target.value.trim();
+
     setPassword(newPassword);
+
     handleCheckStrength(newPassword);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     console.log(password);
+
     setPassword('');
+
     setStrength(0);
   };
 
   const handleCheckStrength = (password) => {
-    let hasLetters = /\p{Letter}/u.test(password);
+    let hasLetters = /\p{L}/u.test(password);
+
     let hasNumbers = /\d/.test(password);
+
     let hasSymbols = /[^\p{L}\p{N}]/gu.test(password);
 
     let componentsCount = [hasLetters, hasNumbers, hasSymbols].filter(
@@ -77,9 +85,12 @@ function App() {
       <input
         type="text"
         name="password"
-        placeholder="enter your password"
+        placeholder="Enter your strongest password"
         onChange={handleChange}
         value={password}></input>
+
+      <button type="submit">Reset</button>
+
       <div className="strength-indicator">
         <div className={prepareClassByStatus(0)}></div>
 
@@ -87,7 +98,6 @@ function App() {
 
         <div className={prepareClassByStatus(2)}></div>
       </div>
-      <button type="submit">Submit</button>
     </form>
   );
 }
