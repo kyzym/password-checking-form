@@ -34,6 +34,44 @@ function App() {
     }
   };
 
+  const getStatus = () => {
+    if (!password.length && !strength) {
+      return 'empty';
+    }
+    if (strength === 0 && password.length > 0) {
+      return 'unsafely';
+    }
+    if (strength === 1) {
+      return 'easy';
+    }
+    if (strength === 2) {
+      return 'medium';
+    }
+    if (strength === 3) {
+      return 'strong';
+    }
+  };
+
+  const prepareClassByStatus = (numberOfCell) => {
+    const status = getStatus();
+
+    if (status === 'empty') return `strength-bar`;
+
+    if (status === 'easy' && numberOfCell === 1) return `strength-bar`;
+
+    if (status === 'unsafely' && numberOfCell === 2) return `strength-bar red`;
+
+    if (status !== 'strong' && numberOfCell === 2) return 'strength-bar';
+
+    if (status === 'strong' && numberOfCell === 2) return 'strength-bar green';
+
+    if (status === 'unsafely' || status === 'easy') return `strength-bar red`;
+
+    if (status === 'medium') return `strength-bar yellow`;
+
+    if (status === 'strong') return `strength-bar green`;
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <input
@@ -43,43 +81,11 @@ function App() {
         onChange={handleChange}
         value={password}></input>
       <div className="strength-indicator">
-        <div
-          className={
-            !password.length && !strength
-              ? 'strength-bar'
-              : password.length > 0 && !strength
-              ? 'strength-bar red'
-              : strength === 1 && password.length > 0
-              ? 'strength-bar red'
-              : strength === 2
-              ? 'strength-bar yellow'
-              : 'strength-bar green'
-          }></div>
+        <div className={prepareClassByStatus(0)}></div>
 
-        <div
-          className={
-            !password.length && !strength
-              ? 'strength-bar'
-              : strength === 0 && password.length > 0
-              ? 'strength-bar red'
-              : strength === 1
-              ? 'strength-bar '
-              : strength === 2
-              ? 'strength-bar yellow'
-              : 'strength-bar green'
-          }></div>
-        <div
-          className={
-            !password.length && !strength
-              ? 'strength-bar'
-              : strength === 0 && password.length > 0
-              ? 'strength-bar red'
-              : strength === 2
-              ? 'strength-bar '
-              : strength === 3
-              ? 'strength-bar green'
-              : 'strength-bar'
-          }></div>
+        <div className={prepareClassByStatus(1)}></div>
+
+        <div className={prepareClassByStatus(2)}></div>
       </div>
       <button type="submit">Submit</button>
     </form>
