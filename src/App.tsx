@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
-import './app.css';
+import './App.css';
 import {
   CellNumber,
   PasswordStrengthStatus,
