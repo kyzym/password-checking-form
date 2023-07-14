@@ -19,7 +19,9 @@ import {
 function App() {
   const [password, setPassword] = useState<string>('');
 
-  const [strength, setStrength] = useState<number>(0);
+  const [strength, setStrength] = useState<StrengthStatus>(
+    StrengthStatus.UNSAFELY
+  );
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value.trim();
@@ -36,7 +38,7 @@ function App() {
 
     setPassword('');
 
-    setStrength(0);
+    setStrength(StrengthStatus.UNSAFELY);
   };
 
   const handleCheckStrength = (password: string) => {
@@ -51,29 +53,31 @@ function App() {
     ).length;
 
     if (!password || password.length < minSecureNumber) {
-      setStrength(0);
+      setStrength(StrengthStatus.UNSAFELY);
     } else {
       setStrength(componentsCount);
     }
   };
 
   const getStatus = (): PasswordStrengthStatus => {
-    if (!password.length && !strength) {
-      return PasswordStrengthStatus.EMPTY;
+    switch (strength) {
+      case StrengthStatus.UNSAFELY:
+        return password.length > 0
+          ? PasswordStrengthStatus.UNSAFELY
+          : PasswordStrengthStatus.EMPTY;
+
+      case StrengthStatus.EASY:
+        return PasswordStrengthStatus.EASY;
+
+      case StrengthStatus.MEDIUM:
+        return PasswordStrengthStatus.MEDIUM;
+
+      case StrengthStatus.STRONG:
+        return PasswordStrengthStatus.STRONG;
+
+      default:
+        return PasswordStrengthStatus.EMPTY;
     }
-    if (strength === StrengthStatus.UNSAFELY && password.length > 0) {
-      return PasswordStrengthStatus.UNSAFELY;
-    }
-    if (strength === StrengthStatus.EASY) {
-      return PasswordStrengthStatus.EASY;
-    }
-    if (strength === StrengthStatus.MEDIUM) {
-      return PasswordStrengthStatus.MEDIUM;
-    }
-    if (strength === StrengthStatus.STRONG) {
-      return PasswordStrengthStatus.STRONG;
-    }
-    return PasswordStrengthStatus.EMPTY;
   };
 
   const prepareClassByStatus = (numberOfCell: number): string => {
@@ -115,7 +119,7 @@ function App() {
 
     if (status === PasswordStrengthStatus.STRONG) return STRENGTH_BAR_GREEN;
 
-    return '';
+    return STRENGTH_BAR;
   };
 
   return (
