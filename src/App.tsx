@@ -127,7 +127,8 @@ function App() {
       <input
         type="text"
         name="password"
-        placeholder="Enter your strongest password"
+        placeholder="Use letters, numbers, symbols"
+        autoComplete="off"
         onChange={handleChange}
         value={password}
       />
