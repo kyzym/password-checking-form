@@ -103,7 +103,7 @@ function App() {
       status === PasswordStrengthStatus.STRONG &&
       numberOfCell === CellNumber.THIRD
     )
-      return 'strength-bar green';
+      return STRENGTH_BAR_GREEN;
 
     if (
       status === PasswordStrengthStatus.UNSAFELY ||
